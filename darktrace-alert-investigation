@@ -1,0 +1,170 @@
+# Darktrace Alert Investigation: DNS Anomaly Validation
+
+## Scenario Overview
+
+Darktrace generated an alert for anomalous DNS behavior from an internal workstation.  
+The objective was to validate whether the DNS activity represented legitimate business traffic, a misconfiguration, or potentially malicious behavior such as command-and-control traffic or DNS tunneling.
+
+---
+
+## Alert Details
+
+**Alert Source:** Darktrace  
+**Alert Type:** DNS Anomaly  
+**Severity:** Medium  
+**Affected Asset:** WS-FIN-07  
+**User:** jdoe  
+**Date/Time:** 2026-03-06 02:14 EST  
+
+### Alert Summary
+Darktrace identified unusual DNS activity from workstation `WS-FIN-07`.  
+The device was observed making a high volume of DNS queries to rare external domains that had not previously been contacted in the environment.
+
+### Resons for suspicion
+Unusual DNS activity can indicate:
+- malware beaconing
+- domain generation algorithm (DGA) activity
+- DNS tunneling
+- command-and-control communication
+- misconfigured software or newly installed applications
+
+---
+
+## Initial Triage
+
+- the queried domains were rare in the environment
+- query volume was elevated compared to the host’s normal behavior
+- several queries resulted in NXDOMAIN responses
+- activity occurred outside the user’s normal working hours
+
+Anomaly itself not automatically malicious.  
+The next step was to validate the behavior using DNS, endpoint, and network evidence.
+
+---
+
+## Investigation Steps
+
+### 1. Review the alert context
+ Reviewed the Darktrace alert metadata to understand:
+- affected host
+- timeframe of activity
+- destination domains
+- frequency of DNS requests
+- whether this behavior was new for the device
+
+### 2. Examine DNS logs
+ Reviewed DNS logs to identify:
+- queried domains
+- timestamps
+- response codes
+- volume and frequency of requests
+- whether requests were sequential or randomized
+
+### 3. Check domain characteristics
+ Assessed whether the domains showed suspicious indicators such as:
+- long or random-looking subdomains
+- repeated failed lookups
+- newly observed domains
+- unusual top-level domains
+- lack of business justification
+
+### 4. Compare against known activity
+ Compared the activity against:
+- the host’s historical behavior
+- other endpoints in the environment
+- expected applications used by the user
+- known enterprise tools that may generate frequent DNS lookups
+
+### 5. Review endpoint activity
+ Reviewed endpoint telemetry around the same timeframe for:
+- new process execution
+- PowerShell or script activity
+- suspicious parent-child process chains
+- browser launches
+- scheduled tasks
+- unusual outbound network connections
+
+### 6. Check for signs of compromise
+ Searched for related indicators including:
+- connections to rare external IPs
+- signs of persistence
+- abnormal authentication activity
+- AV/EDR alerts
+- evidence of data staging or exfiltration
+
+---
+
+## Evidence Reviewed
+
+### Sample DNS Activity
+- `ms-update-check[.]com`
+- `cdn-auth-node[.]net`
+- `api-sync-verification[.]xyz`
+
+### Observed Patterns
+- 137 DNS queries within 11 minutes
+- 84 NXDOMAIN responses
+- multiple rare domains queried for the first time in the environment
+- activity occurred at 02:14 EST
+- host typically active between 08:00 and 18:00 EST
+
+### Endpoint Observations
+- `powershell.exe` launched by `wscript.exe`
+- encoded command line observed shortly before DNS spike
+- no approved software deployment recorded at that time
+
+---
+
+## Findings
+
+The DNS behavior was determined to be suspicious and unlikely to represent normal business activity.
+
+### Supporting Reasons
+- query volume was abnormal for the host
+- domains were rare and not previously contacted
+- repeated NXDOMAIN responses suggested potential DGA behavior
+- activity occurred outside the user’s baseline working hours
+- suspicious PowerShell execution was observed near the same timeframe
+
+### Analyst Assessment
+The alert was validated as a likely true positive.  
+The DNS activity was consistent with possible malware beaconing or domain-generation-based command-and-control attempts.
+
+---
+
+## MITRE ATT&CK Mapping
+
+**T1071.004 – Application Layer Protocol: DNS**  
+Adversaries may use DNS for command-and-control traffic.
+
+**T1059.001 – Command and Scripting Interpreter: PowerShell**  
+PowerShell may be used to execute malicious scripts or payloads.
+
+**T1568.002 – Dynamic Resolution: Domain Generation Algorithms**  
+Threat actors may use algorithmically generated domains to evade detection.
+
+---
+
+## Response Actions
+
+- escalated incident to senior analyst
+- isolated workstation from network
+- preserved relevant logs and telemetry
+- initiated endpoint scan and memory capture procedures
+- blocked identified domains at DNS/web filtering layer
+- reset user credentials as a precaution pending full investigation
+
+---
+
+## Final Verdict
+
+**Verdict:** True Positive  
+**Classification:** Suspicious DNS activity consistent with possible malware-related beaconing or DGA behavior  
+**Priority:** High
+
+---
+
+## Lessons Learned
+
+This scenario reinforced that AI-generated anomaly alerts should be validated through multiple data sources before containment decisions are made.  
+Darktrace highlighted the deviation from normal behavior, but the investigation required correlation across DNS logs, endpoint telemetry, and user activity to determine that the alert was likely malicious.
