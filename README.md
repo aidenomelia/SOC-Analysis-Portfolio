@@ -5,7 +5,7 @@ This repository contains documentation of simulated SOC Investigations, demonstr
 - [Phisihing Incident Investigation Lab](phishing-incident-investigation-lab.md)
 - [Failed Login Log Analysis](log-analysis-example.md)
 - [Malware Alert Simulation](malware-alert-scenario.md)
-
+- [Darktrace Alert Investigation: DNS Anomaly Validation](darktrace-alert-investigation)
 ## Skills Demonstrated
 - Incident response workflows
 - log analysis and interpretation
