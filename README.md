@@ -6,6 +6,7 @@ This repository contains documentation of simulated SOC Investigations, demonstr
 - [Failed Login Log Analysis](log-analysis-example.md)
 - [Malware Alert Simulation](malware-alert-scenario.md)
 - [Darktrace Alert Investigation: DNS Anomaly Validation](darktrace-alert-investigation)
+- [SSH Honeypot Deployment Cowrie](ssh-honeypot-deployment-cowrie.md)
 ## Skills Demonstrated
 - Incident response workflows
 - log analysis and interpretation
